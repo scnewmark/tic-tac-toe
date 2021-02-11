@@ -84,12 +84,12 @@ func (b Board) Full() bool {
 func (b Board) GetWin() *Win {
 	var win *Win
 
-	win = b.fwin(true)
+	win = b.findWin(true)
 	if win.Exists {
 		return win
 	}
 
-	win = b.fwin(false)
+	win = b.findWin(false)
 	if win.Exists {
 		return win
 	}
@@ -97,8 +97,8 @@ func (b Board) GetWin() *Win {
 	return &Win{Exists: false}
 }
 
-// fwin returns whether a win is possible based on bool rfirst
-func (b Board) fwin(rfirst bool) *Win {
+// findWin returns whether a win is possible based on bool rfirst
+func (b Board) findWin(rfirst bool) *Win {
 	for row := 0; row < b.Size; row++ {
 		var xtaken, otaken int = 0, 0
 		for col := 0; col < b.Size; col++ {
