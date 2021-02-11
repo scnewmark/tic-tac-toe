@@ -30,6 +30,15 @@ type Board struct {
 	Matrix [][]int
 }
 
+// Win represents a win situation if such a condition exists.
+type Win struct {
+	// Player is the player who won, if any.
+	Player int
+
+	// Exists is a bool indicating whether or not someone has won.
+	Exists bool
+}
+
 // NewBoard creates a new board of the size specified by ints dy and dx.
 func NewBoard(dy int, dx int) *Board {
 	b := Board{
@@ -69,6 +78,57 @@ func (b Board) Full() bool {
 		}
 	}
 	return true
+}
+
+// GetWin returns the win situation if one exists
+func (b Board) GetWin() *Win {
+	var win *Win
+
+	win = b.fwin(true)
+	if win.Exists {
+		return win
+	}
+
+	win = b.fwin(false)
+	if win.Exists {
+		return win
+	}
+
+	return &Win{Exists: false}
+}
+
+// fwin returns whether a win is possible based on bool rfirst
+func (b Board) fwin(rfirst bool) *Win {
+	for row := 0; row < b.Size; row++ {
+		var xtaken, otaken int = 0, 0
+		for col := 0; col < b.Size; col++ {
+			if rfirst {
+				if b.Matrix[row][col] == X {
+					xtaken++
+				} else if b.Matrix[row][col] == O {
+					otaken++
+				}
+			} else {
+				if b.Matrix[col][row] == X {
+					xtaken++
+				} else if b.Matrix[col][row] == O {
+					otaken++
+				}
+			}
+		}
+		if xtaken == b.Size {
+			return &Win{
+				Exists: true,
+				Player: X,
+			}
+		} else if otaken == b.Size {
+			return &Win{
+				Exists: true,
+				Player: O,
+			}
+		}
+	}
+	return &Win{Exists: false}
 }
 
 // valid is a helper method for determining whether or not a position is valid
