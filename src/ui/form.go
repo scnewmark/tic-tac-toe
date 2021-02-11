@@ -20,16 +20,29 @@ func LoadForm(w fyne.Window) {
 	logic.CurrentMode = logic.SINGLEPLAYER
 	logic.CurrentTurn = logic.X
 
-	sizeMenu := widget.NewSelect(sizes, func(s string) {})
-	pieceMenu := widget.NewSelect(pieces, func(s string) {})
+	label := widget.NewLabel("For boards larger than 3x3, single player mode is disabled")
+	label.Hide()
+
 	playerMode := widget.NewRadioGroup(modes, func(s string) {})
+	sizeMenu := widget.NewSelect(sizes, func(s string) {
+		if s != "3x3" {
+			playerMode.SetSelected("Two Player")
+			playerMode.Disable()
+			label.Show()
+		} else {
+			playerMode.Enable()
+			label.Hide()
+		}
+	})
+	pieceMenu := widget.NewSelect(pieces, func(s string) {})
 
 	form := &widget.Form{
 		SubmitText: "Play",
 		Items: []*widget.FormItem{
 			{Text: "Select a piece:", Widget: pieceMenu},
 			{Text: "Select a board:", Widget: sizeMenu},
-			{Text: "Select a mode:", Widget: playerMode}},
+			{Text: "Select a mode:", Widget: playerMode},
+			{Text: "", Widget: label}},
 		OnSubmit: func() {
 			w.Hide()
 
