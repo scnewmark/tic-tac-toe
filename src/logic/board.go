@@ -97,7 +97,7 @@ func (b Board) GetWin() *Win {
 	return &Win{Exists: false}
 }
 
-// findWin returns whether a win is possible based on bool rfirst
+// findWin returns whether a win exists based on bool rfirst
 func (b Board) findWin(rfirst bool) *Win {
 	for row := 0; row < b.Size; row++ {
 		var xtaken, otaken int = 0, 0
