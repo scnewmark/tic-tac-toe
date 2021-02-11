@@ -7,6 +7,9 @@ const (
 	O
 )
 
+// CurrentTurn holds the current turn value.
+var CurrentTurn int = X
+
 // Board represents a playing board.
 type Board struct {
 	// Size is the length of each row and column.
@@ -45,6 +48,7 @@ func (b Board) Available(r int, c int) bool {
 	return false
 }
 
+// valid is a helper method for determining whether or not a position is valid
 func (b Board) valid(r int, c int, opts ...int) bool {
 	if r > b.Size || c > b.Size {
 		return false
