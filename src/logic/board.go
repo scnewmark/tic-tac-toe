@@ -7,8 +7,19 @@ const (
 	O
 )
 
-// CurrentTurn holds the current turn value.
-var CurrentTurn int = X
+// Declarations of single player and two player game modes
+const (
+	SINGLEPLAYER int = (iota + 1) << 5
+	TWOPLAYER
+)
+
+var (
+	// CurrentTurn holds the current turn value.
+	CurrentTurn int = X
+
+	// CurrentMode holds the current mode value.
+	CurrentMode int = SINGLEPLAYER
+)
 
 // Board represents a playing board.
 type Board struct {
@@ -19,10 +30,10 @@ type Board struct {
 	Matrix [][]int
 }
 
-// New creates a new board of the size specified by int s.
-func New(dy int, dx int) *Board {
+// NewBoard creates a new board of the size specified by ints dy and dx.
+func NewBoard(dy int, dx int) *Board {
 	b := Board{
-		Size:   3,
+		Size:   dy,
 		Matrix: make([][]int, dy),
 	}
 
@@ -46,6 +57,18 @@ func (b Board) Available(r int, c int) bool {
 		return b.Matrix[r][c] == EMPTY
 	}
 	return false
+}
+
+// Full returns a boolean value indicative of whether or not the board is full.
+func (b Board) Full() bool {
+	for row := 0; row < b.Size; row++ {
+		for col := 0; col < b.Size; col++ {
+			if b.Matrix[row][col] == EMPTY {
+				return false
+			}
+		}
+	}
+	return true
 }
 
 // valid is a helper method for determining whether or not a position is valid
