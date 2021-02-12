@@ -94,7 +94,7 @@ func (b Board) GetWin() *Win {
 		return win
 	}
 
-	return &Win{Exists: false}
+	return win
 }
 
 // findWin returns whether a win exists based on bool rfirst
