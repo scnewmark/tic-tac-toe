@@ -45,7 +45,7 @@ func updateState(w fyne.Window, row int, col int) {
 
 	if logic.CurrentTurn == logic.X {
 		btn.SetText("X")
-		board.Matrix[row][col] = logic.X
+		board.Insert(row, col, logic.X)
 
 		if checkWin(w, btn, row, col) {
 			return
@@ -54,7 +54,7 @@ func updateState(w fyne.Window, row int, col int) {
 		logic.CurrentTurn = logic.O
 	} else {
 		btn.SetText("O")
-		board.Matrix[row][col] = logic.O
+		board.Insert(row, col, logic.O)
 
 		if checkWin(w, btn, row, col) {
 			return
