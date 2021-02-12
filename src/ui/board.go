@@ -41,6 +41,8 @@ func button(w fyne.Window, row int, col int) *widget.Button {
 // updateState is an internal method to manage the visible boardstate. Triggered when a button is clicked.
 func updateState(w fyne.Window, row int, col int) {
 	btn := Buttons[fmt.Sprintf("%d-%d", row, col)]
+	btn.Disable()
+
 	if logic.CurrentTurn == logic.X {
 		btn.SetText("X")
 		board.Matrix[row][col] = logic.X
@@ -60,7 +62,6 @@ func updateState(w fyne.Window, row int, col int) {
 
 		logic.CurrentTurn = logic.X
 	}
-	btn.Disable()
 
 	if board.Full() {
 		createPopup(w, "Game is a tie!")
