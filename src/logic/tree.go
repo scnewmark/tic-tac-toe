@@ -5,9 +5,19 @@ type Node struct {
 	// Value contains the value of this node.
 	Value [3][3]int
 
+	// Weight represents the weight of a move.
+	Weight int
+
 	// Children is a slice containing children of this node.
 	Children []*Node
 }
+
+// Constants defined for assigning weights to positions.
+const (
+	owin int = iota - 1
+	nowin
+	xwin
+)
 
 // previous represents the most recently inserted value
 var previous int = O
@@ -17,6 +27,7 @@ func Tree() *Node {
 	var root *Node = &Node{
 		Value:    [3][3]int{},
 		Children: []*Node{},
+		Weight:   0,
 	}
 	generateChildren(root)
 	return root
@@ -44,8 +55,15 @@ func generateChildren(node *Node) {
 					Value:    matrix,
 					Children: []*Node{},
 				})
-				if !winner(matrix) {
+				if !Winner(matrix).Exists {
 					generateChildren(node.Children[child])
+					node.Children[child].Weight = nowin
+				} else {
+					if Winner(matrix).Player == X {
+						node.Children[child].Weight = xwin
+					} else if Winner(matrix).Player == O {
+						node.Children[child].Weight = owin
+					}
 				}
 				child++
 			}
@@ -53,17 +71,21 @@ func generateChildren(node *Node) {
 	}
 }
 
-// winner is a static helper function for checking if a child node is a leaf node.
-func winner(matrix [3][3]int) bool {
+// Winner is a static helper function for checking if a child node is a leaf node.
+func Winner(matrix [3][3]int) *Win {
 	for row := 0; row < 3; row++ {
-		if (matrix[row][0] == X && matrix[row][1] == X && matrix[row][2] == X) || (matrix[row][0] == O && matrix[row][1] == O && matrix[row][2] == O) {
-			return true
+		if matrix[row][0] == X && matrix[row][1] == X && matrix[row][2] == X {
+			return &Win{Exists: true, Player: X}
+		} else if matrix[row][0] == O && matrix[row][1] == O && matrix[row][2] == O {
+			return &Win{Exists: true, Player: O}
 		}
 	}
 
 	for col := 0; col < 3; col++ {
-		if (matrix[0][col] == X && matrix[1][col] == X && matrix[2][col] == X) || (matrix[0][col] == O && matrix[1][col] == O && matrix[2][col] == O) {
-			return true
+		if matrix[0][col] == X && matrix[1][col] == X && matrix[2][col] == X {
+			return &Win{Exists: true, Player: X}
+		} else if matrix[0][col] == O && matrix[1][col] == O && matrix[2][col] == O {
+			return &Win{Exists: true, Player: O}
 		}
 	}
 
@@ -76,13 +98,17 @@ func winner(matrix [3][3]int) bool {
 		}
 	}
 
-	if xtaken == 3 || otaken == 3 {
-		return true
+	if xtaken == 3 {
+		return &Win{Exists: true, Player: X}
+	} else if otaken == 3 {
+		return &Win{Exists: true, Player: O}
 	}
 
-	if (matrix[0][2] == X && matrix[1][1] == X && matrix[2][0] == X) || (matrix[0][2] == O && matrix[1][1] == O && matrix[2][0] == O) {
-		return true
+	if matrix[0][2] == X && matrix[1][1] == X && matrix[2][0] == X {
+		return &Win{Exists: true, Player: X}
+	} else if matrix[0][2] == O && matrix[1][1] == O && matrix[2][0] == O {
+		return &Win{Exists: true, Player: O}
 	}
 
-	return false
+	return &Win{Exists: false}
 }
