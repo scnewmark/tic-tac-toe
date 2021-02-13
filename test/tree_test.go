@@ -26,7 +26,7 @@ func Test(t *testing.T) {
 	fmt.Fprintf(writer, "Leaf nodes\t%d\t%t\n", leafNodes, leafNodes == 255168)
 	fmt.Fprintf(writer, "X wins\t%d\t%t\n", xwins, xwins == 131184)
 	fmt.Fprintf(writer, "O wins\t%d\t%t\n", owins, owins == 77904)
-	fmt.Fprintf(writer, "draws\t%d\t%t\n\n", draws, draws == 46080)
+	fmt.Fprintf(writer, "Draws\t%d\t%t\n\n", draws, draws == 46080)
 
 	writer.Flush()
 }
