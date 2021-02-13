@@ -1,7 +1,10 @@
 package test
 
 import (
+	"fmt"
+	"os"
 	"testing"
+	"text/tabwriter"
 
 	"github.com/scnewmark/tic-tac-toe/src/logic"
 )
@@ -15,10 +18,17 @@ var (
 func Test(t *testing.T) {
 	tree := logic.Tree()
 	leafNodes := countLeafNodes(tree)
-	t.Logf("Total leaf nodes: %d\n", leafNodes)
-	t.Logf("X Wins: %d\n", xwins)
-	t.Logf("O Wins: %d\n", owins)
-	t.Logf("Draws: %d\n", draws)
+
+	writer := tabwriter.NewWriter(os.Stdout, 0, 8, 1, '\t', tabwriter.AlignRight)
+
+	fmt.Fprintln(writer, "Value\tResult\tExpected")
+	fmt.Fprintln(writer, "--------\t--------\t--------")
+	fmt.Fprintf(writer, "Leaf nodes\t%d\t%t\n", leafNodes, leafNodes == 255168)
+	fmt.Fprintf(writer, "X wins\t%d\t%t\n", xwins, xwins == 131184)
+	fmt.Fprintf(writer, "O wins\t%d\t%t\n", owins, owins == 77904)
+	fmt.Fprintf(writer, "draws\t%d\t%t\n\n", draws, draws == 46080)
+
+	writer.Flush()
 }
 
 func countLeafNodes(root *logic.Node) (nodes int) {
