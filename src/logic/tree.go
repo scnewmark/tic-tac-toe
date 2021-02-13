@@ -53,6 +53,7 @@ func generateChildren(node *Node) {
 	}
 }
 
+// winner is a static helper function for checking if a child node is a leaf node.
 func winner(matrix [3][3]int) bool {
 	for row := 0; row < 3; row++ {
 		if (matrix[row][0] == X && matrix[row][1] == X && matrix[row][2] == X) || (matrix[row][0] == O && matrix[row][1] == O && matrix[row][2] == O) {
