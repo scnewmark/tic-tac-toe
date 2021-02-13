@@ -117,17 +117,29 @@ func (b Board) findWin(rfirst bool) *Win {
 			}
 		}
 		if xtaken == b.Size {
-			return &Win{
-				Exists: true,
-				Player: X,
-			}
+			return &Win{Exists: true, Player: X}
 		} else if otaken == b.Size {
-			return &Win{
-				Exists: true,
-				Player: O,
+			return &Win{Exists: true, Player: O}
+		}
+	}
+
+	var xtaken, otaken = 0, 0
+	for row := 0; row < b.Size; row++ {
+		for col := 0; col < b.Size; col++ {
+			if b.Matrix[row][col] == X {
+				xtaken++
+			} else if b.Matrix[row][col] == O {
+				otaken++
 			}
 		}
 	}
+
+	if xtaken == b.Size {
+		return &Win{Exists: true, Player: X}
+	} else if otaken == b.Size {
+		return &Win{Exists: true, Player: O}
+	}
+
 	return &Win{Exists: false}
 }
 
