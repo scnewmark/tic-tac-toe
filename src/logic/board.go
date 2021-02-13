@@ -116,22 +116,35 @@ func (b Board) findWin(rfirst bool) *Win {
 				}
 			}
 		}
-		if xtaken == b.Size {
-			return &Win{Exists: true, Player: X}
-		} else if otaken == b.Size {
-			return &Win{Exists: true, Player: O}
+		if winner := b.win(xtaken, otaken); winner.Exists {
+			return winner
 		}
 	}
 
 	var xtaken, otaken = 0, 0
-	for row := 0; row < b.Size; row++ {
-		for col := 0; col < b.Size; col++ {
-			if b.Matrix[row][col] == X {
-				xtaken++
-			} else if b.Matrix[row][col] == O {
-				otaken++
-			}
+	for i := 0; i < b.Size; i++ {
+		if b.Matrix[i][i] == X {
+			xtaken++
+		} else if b.Matrix[i][i] == O {
+			otaken++
 		}
+	}
+
+	if winner := b.win(xtaken, otaken); winner.Exists {
+		return winner
+	}
+
+	xtaken, otaken = 0, 0
+	for i := 0; i < b.Size; i++ {
+		if b.Matrix[b.Size-i-1][i] == X {
+			xtaken++
+		} else if b.Matrix[b.Size-i-1][i] == O {
+			otaken++
+		}
+	}
+
+	if winner := b.win(xtaken, otaken); winner.Exists {
+		return winner
 	}
 
 	if xtaken == b.Size {
@@ -140,6 +153,15 @@ func (b Board) findWin(rfirst bool) *Win {
 		return &Win{Exists: true, Player: O}
 	}
 
+	return &Win{Exists: false}
+}
+
+func (b Board) win(x int, o int) *Win {
+	if x == b.Size {
+		return &Win{Exists: true, Player: X}
+	} else if o == b.Size {
+		return &Win{Exists: true, Player: O}
+	}
 	return &Win{Exists: false}
 }
 
