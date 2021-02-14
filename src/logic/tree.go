@@ -27,7 +27,7 @@ func Tree() *Node {
 	var root *Node = &Node{
 		Value:    [3][3]int{},
 		Children: []*Node{},
-		Weight:   0,
+		Weight:   nowin,
 	}
 	generateChildren(root)
 	return root
