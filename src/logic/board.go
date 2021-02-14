@@ -55,17 +55,7 @@ func NewBoard(dy int, dx int) *Board {
 
 // Insert is a helper method for inserting a piece at the selected row and column.
 func (b Board) Insert(r int, c int, p int) {
-	if b.valid(r, c, p) {
-		b.Matrix[r][c] = p
-	}
-}
-
-// Available is a helper method for checking if a space is available.
-func (b Board) Available(r int, c int) bool {
-	if b.valid(r, c) {
-		return b.Matrix[r][c] == EMPTY
-	}
-	return false
+	b.Matrix[r][c] = p
 }
 
 // Full returns a boolean value indicative of whether or not the board is full.
@@ -163,14 +153,4 @@ func (b Board) win(x int, o int) *Win {
 		return &Win{Exists: true, Player: O}
 	}
 	return &Win{Exists: false}
-}
-
-// valid is a helper method for determining whether or not a position is valid
-func (b Board) valid(r int, c int, opts ...int) bool {
-	if r > b.Size || c > b.Size {
-		return false
-	} else if len(opts) > 0 && opts[0] > int(O) {
-		return false
-	}
-	return true
 }
