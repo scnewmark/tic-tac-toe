@@ -2,6 +2,8 @@ package ui
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -22,11 +24,10 @@ func LoadBoard(w fyne.Window, size int) *fyne.Container {
 	c := container.New(layout.NewGridLayout(size))
 	for row := 0; row < size; row++ {
 		for col := 0; col < size; col++ {
-			c.Objects = append(c.Objects, button(w, row, col))
+			c.Add(button(w, row, col))
 		}
 	}
 	board = logic.NewBoard(size, size)
-	c.Refresh()
 	return c
 }
 
@@ -68,6 +69,21 @@ func updateState(w fyne.Window, row int, col int) {
 	}
 }
 
+// Reset resets the current boardstate to empty.
+func Reset() {
+	for key, btn := range Buttons {
+		btn.SetText("")
+		btn.Enable()
+
+		values := strings.Split(key, "-")
+		row, _ := strconv.Atoi(values[0])
+		col, _ := strconv.Atoi(values[1])
+
+		board.Insert(row, col, logic.EMPTY)
+	}
+	logic.CurrentTurn = logic.X
+}
+
 func createPopup(w fyne.Window, t string) {
 	btn := widget.NewButton("Play Again", func() {})
 
@@ -77,9 +93,7 @@ func createPopup(w fyne.Window, t string) {
 	popup := widget.NewModalPopUp(widget.NewForm(text, fbtn), w.Canvas())
 
 	btn.OnTapped = func() {
-		w.Hide()
-		LoadForm(w)
-		w.Show()
+		Reset()
 		popup.Hide()
 	}
 
