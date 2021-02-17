@@ -10,12 +10,12 @@ import (
 )
 
 var (
-	xwins int
-	owins int
-	draws int
+	xwins int64
+	owins int64
+	draws int64
 )
 
-func Test(t *testing.T) {
+func TestTree(t *testing.T) {
 	tree := logic.Tree()
 	leafNodes := countLeafNodes(tree)
 
@@ -23,10 +23,10 @@ func Test(t *testing.T) {
 
 	fmt.Fprintln(writer, "Value\tResult\tExpected")
 	fmt.Fprintln(writer, "--------\t--------\t--------")
-	fmt.Fprintf(writer, "Leaf nodes\t%d\t%t\n", leafNodes, leafNodes == 255168)
-	fmt.Fprintf(writer, "X wins\t%d\t%t\n", xwins, xwins == 131184)
-	fmt.Fprintf(writer, "O wins\t%d\t%t\n", owins, owins == 77904)
-	fmt.Fprintf(writer, "Draws\t%d\t%t\n\n", draws, draws == 46080)
+	fmt.Fprintf(writer, "Leaf nodes\t%d\t%t\n", leafNodes, int64(leafNodes) == int64(255168))
+	fmt.Fprintf(writer, "X wins\t%d\t%t\n", xwins, xwins == int64(131184))
+	fmt.Fprintf(writer, "O wins\t%d\t%t\n", owins, owins == int64(77904))
+	fmt.Fprintf(writer, "Draws\t%d\t%t\n\n", draws, draws == int64(46080))
 
 	writer.Flush()
 }

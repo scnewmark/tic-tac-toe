@@ -6,7 +6,7 @@ type Node struct {
 	Value [3][3]int
 
 	// Weight represents the weight of a move.
-	Weight int
+	Weight int64
 
 	// Children is a slice containing children of this node.
 	Children []*Node
@@ -14,13 +14,13 @@ type Node struct {
 
 // Constants defined for assigning weights to positions.
 const (
-	owin int = iota - 1
+	owin int64 = iota - 1
 	nowin
 	xwin
 )
 
 // previous represents the most recently inserted value
-var previous int = O
+var previous int = X
 
 // Tree generates a new game tree.
 func Tree() *Node {
