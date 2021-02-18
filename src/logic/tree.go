@@ -20,7 +20,7 @@ const (
 )
 
 // previous represents the most recently inserted value
-var previous int = X
+var previous int = O
 
 // Tree generates a new game tree.
 func Tree() *Node {

@@ -17,6 +17,8 @@ var (
 	Buttons map[string]*widget.Button = make(map[string]*widget.Button)
 
 	board *logic.Board
+
+	tree *logic.Node
 )
 
 // LoadBoard loads a board of the specified size.
@@ -28,6 +30,7 @@ func LoadBoard(w fyne.Window, size int) *fyne.Container {
 		}
 	}
 	board = logic.NewBoard(size, size)
+	tree = logic.Tree()
 	return c
 }
 
@@ -53,6 +56,13 @@ func updateState(w fyne.Window, row int, col int) {
 		}
 
 		logic.CurrentTurn = logic.O
+
+		if logic.CurrentMode == logic.SINGLEPLAYER {
+			current := logic.Find(tree, board.Matrix)
+			row, col := logic.Move(current)
+			updateState(w, row, col)
+		}
+
 	} else {
 		btn.SetText("O")
 		board.Insert(row, col, logic.O)
