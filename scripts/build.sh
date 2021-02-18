@@ -2,6 +2,6 @@
 
 cd ../src
 
-go build -o "../out/tic-tac-toe"
+go build -o "../out/TIc Tac Toe"
 
 cd ../
