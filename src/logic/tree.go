@@ -14,9 +14,9 @@ type Node struct {
 
 // Constants defined for assigning weights to positions.
 const (
-	owin int64 = iota - 1
-	nowin
-	xwin
+	owin  int64 = -1000
+	nowin int64 = 0
+	xwin  int64 = 1000
 )
 
 // previous represents the most recently inserted value

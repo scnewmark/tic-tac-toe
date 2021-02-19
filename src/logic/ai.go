@@ -1,7 +1,6 @@
 package logic
 
 import (
-	"fmt"
 	"math"
 	"math/rand"
 )
@@ -26,8 +25,6 @@ func (b Board) Move(n *Node) (xpos int, ypos int) {
 		}
 	}
 
-	fmt.Println(board)
-
 	var x, y int = pos(n.Value, board)
 	for {
 		if available(convert(b.Matrix), x, y) {
@@ -50,6 +47,7 @@ func Find(node *Node, b [][]int) *Node {
 	return node
 }
 
+// available checks whether or not a position is available.
 func available(board [3][3]int, row int, col int) bool {
 	if board[row][col] == EMPTY {
 		return true
@@ -57,6 +55,7 @@ func available(board [3][3]int, row int, col int) bool {
 	return false
 }
 
+// convert converts a slice to an array.
 func convert(b [][]int) (dest [3][3]int) {
 	for row := 0; row < 3; row++ {
 		for col := 0; col < 3; col++ {
@@ -80,155 +79,72 @@ func pos(old [3][3]int, new [3][3]int) (x int, y int) {
 
 // heuristic is a function for modifying the value of a child node based on conditions that will lead to a win.
 func heuristic(n *Node) int64 {
+	if len(n.Children) == 7 && n.Value[1][1] == O {
+		return 500
+	}
 	if block(n.Value) {
 		return 15
-	} else if fork(n.Value) {
-		return 10
-	} else if two(n.Value) {
-		return 5
 	}
 	return 0
 }
 
+// block checks for whether or not a child node blocks X from winning.
 func block(b [3][3]int) bool {
 	for i := 0; i < 3; i++ {
 		// -------------------------------------------------------
 		// Rows
-		if b[i][0] == X && b[i][1] == X && b[i][2] == EMPTY {
+		if b[i][0] == X && b[i][1] == X && b[i][2] == O {
 			return true
 		}
 
-		if b[i][0] == EMPTY && b[i][1] == X && b[i][2] == X {
+		if b[i][0] == O && b[i][1] == X && b[i][2] == X {
 			return true
 		}
 
-		if b[0][i] == X && b[1][i] == EMPTY && b[2][i] == X {
+		if b[i][0] == X && b[i][1] == O && b[i][2] == X {
 			return true
 		}
 
 		// -------------------------------------------------------
 		// Columns
-		if b[0][i] == X && b[1][i] == EMPTY && b[2][i] == X {
+		if b[0][i] == X && b[1][i] == O && b[2][i] == X {
 			return true
 		}
 
-		if b[0][i] == EMPTY && b[1][i] == X && b[2][i] == X {
+		if b[0][i] == O && b[1][i] == X && b[2][i] == X {
 			return true
 		}
 
-		if b[0][i] == X && b[1][i] == X && b[2][i] == EMPTY {
+		if b[0][i] == X && b[1][i] == X && b[2][i] == O {
 			return true
 		}
 	}
-	return false
-}
 
-// two returns a boolean indicative of whether or not board b is a two in a row.
-func two(b [3][3]int) bool {
-	xv, xd, xh, ov, od, oh := check(b)
+	// -------------------------------------------------------
+	// Diagonals
+	if b[0][0] == X && b[1][1] == X && b[2][2] == O {
+		return true
+	}
 
-	var x []int = []int{xv, xd, xh}
-	var o []int = []int{ov, od, oh}
+	if b[0][0] == X && b[1][1] == O && b[2][2] == X {
+		return true
+	}
 
-	for i := 0; i < len(x); i++ {
-		for k := 0; k < len(o); k++ {
-			if x[i]+x[k] == 1 && i != k {
-				return true
-			} else if o[i]+o[k] == 1 && i != k {
-				return true
-			}
-		}
+	if b[0][0] == O && b[1][1] == X && b[2][2] == X {
+		return true
+	}
+
+	if b[2][0] == X && b[1][1] == X && b[0][2] == O {
+		return true
+	}
+
+	if b[2][0] == X && b[1][1] == O && b[0][2] == X {
+		return true
+	}
+
+	if b[2][0] == O && b[1][1] == X && b[0][2] == X {
+		return true
 	}
 
 	return false
-}
-
-// fork returns a boolean indicative of whether or not board b is a fork.
-func fork(b [3][3]int) bool {
-	xv, xd, xh, ov, od, oh := check(b)
-
-	var x []int = []int{xv, xd, xh}
-	var o []int = []int{ov, od, oh}
-
-	for i := 0; i < len(x); i++ {
-		for k := 0; k < len(o); k++ {
-			if x[i]+x[k] > 1 && i != k {
-				return true
-			} else if o[i]+o[k] > 1 && i != k {
-				return true
-			}
-		}
-	}
-
-	return false
-}
-
-func check(b [3][3]int) (int, int, int, int, int, int) {
-	var xv, xd, xh int = 0, 0, 0
-	var ov, od, oh int = 0, 0, 0
-
-	var xtaken, otaken = 0, 0
-	for row := 0; row < len(b); row++ {
-		for col := 0; col < len(b[row]); col++ {
-			if b[row][col] == X {
-				xtaken++
-			} else if b[row][col] == O {
-				otaken++
-			}
-		}
-
-		if xtaken == 2 && otaken == 0 {
-			xh++
-		} else if otaken == 2 && xtaken == 0 {
-			oh++
-		}
-	}
-
-	xtaken, otaken = 0, 0
-	for row := 0; row < len(b[0]); row++ {
-		for col := 0; col < len(b); col++ {
-			if b[col][row] == X {
-				xtaken++
-			} else if b[col][row] == O {
-				otaken++
-			}
-		}
-		if xtaken == 2 && otaken == 0 {
-			xv++
-		} else if otaken == 2 && xtaken == 0 {
-			ov++
-		}
-	}
-
-	xtaken, otaken = 0, 0
-	for i := 0; i < len(b); i++ {
-		if b[i][i] == X {
-			xtaken++
-		} else if b[i][i] == O {
-			otaken++
-		}
-	}
-
-	if xtaken == 2 && otaken == 0 {
-		xd++
-	} else if otaken == 2 && xtaken == 0 {
-		od++
-	}
-
-	xtaken, otaken = 0, 0
-	for i := 0; i < len(b); i++ {
-		if b[3-i-1][i] == X {
-			xtaken++
-		} else if b[3-i-1][i] == O {
-			otaken++
-		}
-	}
-
-	if xtaken == 2 && otaken == 0 {
-		xd++
-	} else if otaken == 2 && xtaken == 0 {
-		od++
-	}
-
-	return xv, xd, xh, ov, od, oh
 }
