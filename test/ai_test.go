@@ -8,6 +8,7 @@ import (
 
 func TestAI(t *testing.T) {
 	arr := logic.Tree().Children[0]
-	xpos, ypos := logic.Move(arr)
+	board := logic.NewBoard(3, 3)
+	xpos, ypos := board.Move(arr)
 	t.Log(xpos, ypos)
 }

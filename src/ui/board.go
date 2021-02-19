@@ -59,7 +59,7 @@ func updateState(w fyne.Window, row int, col int) {
 
 		if logic.CurrentMode == logic.SINGLEPLAYER {
 			current := logic.Find(tree, board.Matrix)
-			row, col := logic.Move(current)
+			row, col := board.Move(current)
 			updateState(w, row, col)
 		}
 

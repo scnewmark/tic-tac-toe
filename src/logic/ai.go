@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"fmt"
 	"math"
 	"math/rand"
 )
@@ -12,19 +13,24 @@ const (
 )
 
 // Move returns the best move based on the current boardstate board.
-func Move(n *Node) (xpos int, ypos int) {
-	var board [3][3]int
-	value := minimax(n, len(n.Children), false)
+func (b Board) Move(n *Node) (xpos int, ypos int) {
+	var (
+		board  [3][3]int
+		lowest int64 = 0
+	)
 
 	for _, child := range n.Children {
-		if child.Weight-heuristic(child) == value {
+		if child.Weight-heuristic(child) < lowest {
+			lowest = child.Weight
 			board = child.Value
 		}
 	}
 
+	fmt.Println(board)
+
 	var x, y int = pos(n.Value, board)
 	for {
-		if available(board, x, y) {
+		if available(convert(b.Matrix), x, y) {
 			break
 		}
 		x, y = rand.Intn(3), rand.Intn(3)
@@ -34,28 +40,14 @@ func Move(n *Node) (xpos int, ypos int) {
 }
 
 // Find finds the current boardstate.
-func Find(node *Node, b [][]int) (res *Node) {
-	var depth int = depth(b)
+func Find(node *Node, b [][]int) *Node {
 	for _, child := range node.Children {
-		res = child
-		if len(res.Children) != depth {
-			Find(child, b)
-		} else {
-			break
+		node := Find(child, b)
+		if node.Value == convert(b) {
+			return node
 		}
 	}
-	return res
-}
-
-func depth(b [][]int) (depth int) {
-	for row := 0; row < 3; row++ {
-		for col := 0; col < 3; col++ {
-			if b[row][col] == EMPTY {
-				depth++
-			}
-		}
-	}
-	return depth
+	return node
 }
 
 func available(board [3][3]int, row int, col int) bool {
@@ -86,35 +78,49 @@ func pos(old [3][3]int, new [3][3]int) (x int, y int) {
 	return -1, -1
 }
 
-// minimax is an implementation of the minimax algorithm
-//
-// https://en.wikipedia.org/wiki/Minimax#Pseudocode
-func minimax(n *Node, d int, maximizing bool) int64 {
-	if d == 0 || len(n.Children) < 1 {
-		return n.Weight + heuristic(n)
-	}
-	if maximizing {
-		value := NegativeInfinity
-		for _, child := range n.Children {
-			value = max(child.Weight+heuristic(child), minimax(child, d-1, false))
-		}
-		return value
-	}
-	value := PositiveInfinity
-	for _, child := range n.Children {
-		value = min(child.Weight-heuristic(child), minimax(child, d-1, true))
-	}
-	return value
-}
-
 // heuristic is a function for modifying the value of a child node based on conditions that will lead to a win.
 func heuristic(n *Node) int64 {
-	if fork(n.Value) {
+	if block(n.Value) {
+		return 15
+	} else if fork(n.Value) {
 		return 10
 	} else if two(n.Value) {
 		return 5
 	}
 	return 0
+}
+
+func block(b [3][3]int) bool {
+	for i := 0; i < 3; i++ {
+		// -------------------------------------------------------
+		// Rows
+		if b[i][0] == X && b[i][1] == X && b[i][2] == EMPTY {
+			return true
+		}
+
+		if b[i][0] == EMPTY && b[i][1] == X && b[i][2] == X {
+			return true
+		}
+
+		if b[0][i] == X && b[1][i] == EMPTY && b[2][i] == X {
+			return true
+		}
+
+		// -------------------------------------------------------
+		// Columns
+		if b[0][i] == X && b[1][i] == EMPTY && b[2][i] == X {
+			return true
+		}
+
+		if b[0][i] == EMPTY && b[1][i] == X && b[2][i] == X {
+			return true
+		}
+
+		if b[0][i] == X && b[1][i] == X && b[2][i] == EMPTY {
+			return true
+		}
+	}
+	return false
 }
 
 // two returns a boolean indicative of whether or not board b is a two in a row.
@@ -225,20 +231,4 @@ func check(b [3][3]int) (int, int, int, int, int, int) {
 	}
 
 	return xv, xd, xh, ov, od, oh
-}
-
-// max retuns the higher number of a and b.
-func max(a int64, b int64) int64 {
-	if a > b {
-		return a
-	}
-	return b
-}
-
-// min returns the lower number of a and b.
-func min(a int64, b int64) int64 {
-	if a < b {
-		return a
-	}
-	return b
 }
