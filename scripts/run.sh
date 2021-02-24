@@ -2,6 +2,6 @@
 
 ./build.sh
 
-cd ../out
+cd ../build
 
 ./Tic\ Tac\ Toe
