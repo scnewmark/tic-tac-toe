@@ -73,10 +73,6 @@ func updateState(w fyne.Window, row int, col int) {
 
 		logic.CurrentTurn = logic.X
 	}
-
-	if board.Full() {
-		createPopup(w, "Game is a tie!")
-	}
 }
 
 // Reset resets the current boardstate to empty.
@@ -118,6 +114,9 @@ func checkWin(w fyne.Window, btn *widget.Button, row int, col int) bool {
 		return true
 	} else if win.Exists && win.Player == logic.O {
 		createPopup(w, "O won the game!")
+		return true
+	} else if board.Full() {
+		createPopup(w, "Game is a tie!")
 		return true
 	}
 	return false
